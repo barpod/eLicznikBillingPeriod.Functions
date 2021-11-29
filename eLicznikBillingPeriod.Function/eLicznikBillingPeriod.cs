@@ -5,7 +5,7 @@ using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using eLicznikBillingPeriod;
+//using eLicznikBillingPeriod;
 
 namespace ELicznikBillingPeriod
 {
@@ -24,35 +24,35 @@ namespace ELicznikBillingPeriod
         {
             _logger.LogInformation($"C# HTTP trigger function processed a request: {startDate} - {endDate}.");
 
-            var httpClient = new HttpClient();
-            var start = DateTime.Parse(startDate);
-            var end = endDate == null ? DateTime.Now : DateTime.Parse(endDate);
-            var period = new Library.Period(start, end);
-            var username = Environment.GetEnvironmentVariable("USERNAME");
-            var password = Environment.GetEnvironmentVariable("PASSWORD");
-            var meterNr = Environment.GetEnvironmentVariable("METER_NR");
-            var connectionData = new Library.UserData( username, password, meterNr, 0.8);
-            var fSharpAsync = Library.readingsForPeriodAsync(httpClient, period, connectionData);
-            fSharpAsync.Wait();
-            var res = fSharpAsync.Result;
+            // var httpClient = new HttpClient();
+            // var start = DateTime.Parse(startDate);
+            // var end = endDate == null ? DateTime.Now : DateTime.Parse(endDate);
+            // var period = new Library.Period(start, end);
+            // var username = Environment.GetEnvironmentVariable("USERNAME");
+            // var password = Environment.GetEnvironmentVariable("PASSWORD");
+            // var meterNr = Environment.GetEnvironmentVariable("METER_NR");
+            // var connectionData = new Library.UserData( username, password, meterNr, 0.8);
+            // var fSharpAsync = Library.readingsForPeriodAsync(httpClient, period, connectionData);
+            // fSharpAsync.Wait();
+            // var res = fSharpAsync.Result;
 
-            if (res.IsOk)
-            {
-                var response = req.CreateResponse(HttpStatusCode.OK);
-                response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                string serialized = JsonSerializer.Serialize(res.ResultValue);
+            // if (res.IsOk)
+            // {
+            //     var response = req.CreateResponse(HttpStatusCode.OK);
+            //     response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+            //     string serialized = JsonSerializer.Serialize(res.ResultValue);
                 
-                response.WriteString(serialized);
+            //     response.WriteString(serialized);
 
-                return response;
-            }
-            else 
-            {
+            //     return response;
+            // }
+            // else 
+            // {
                 var response = req.CreateResponse(HttpStatusCode.NotFound);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
                 return response;
-            }
+            //}
 
         }
     }
