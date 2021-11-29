@@ -1,0 +1,51 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+variables:
+- name: function.app.name
+  value: eLicznikBillingPeriod
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
+  inputs:
+    packageType: 'sdk'
+    version: '6.0.x'
+    includePreviewVersions: true
+- task: DotNetCoreCLI@2
+  displayName: "Publish function"
+  inputs:
+    command: 'publish'
+    projects: 'eLicznikBillingPeriod.Function/eLicznikBillingPeriod.Function.csproj'
+    arguments: '--configuration Release --output publish_output'
+    publishWebProjects: false
+    modifyOutputPath: false
+    zipAfterPublish: false
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'elicznik-billing-period-conn'
+    scriptType: 'bash'
+    scriptLocation: 'scriptPath'
+    scriptPath: 'deploy.sh'
+  displayName: 'Run infrastructure deployment script'
+- task: ArchiveFiles@2
+  displayName: "Archive function"
+  inputs:
+    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+    includeRootFolder: false
+    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+- task: AzureFunctionApp@1
+  inputs:
+    azureSubscription: 'elicznik-billing-period-conn'
+    appType: 'functionApp'
+    appName: $(function.app.name)
+    package: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+    deploymentMethod: 'auto'
