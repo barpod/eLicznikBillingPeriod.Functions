@@ -28,9 +28,9 @@ namespace ELicznikBillingPeriod
             var start = DateTime.Parse(startDate);
             var end = endDate == null ? DateTime.Now : DateTime.Parse(endDate);
             var period = new Library.Period(start, end);
-            var username = Environment.GetEnvironmentVariable("USERNAME");
-            var password = Environment.GetEnvironmentVariable("PASSWORD");
-            var meterNr = Environment.GetEnvironmentVariable("METER_NR");
+            var username = Environment.GetEnvironmentVariable("ELICZNIK_USERNAME");
+            var password = Environment.GetEnvironmentVariable("ELICZNIK_PASSWORD");
+            var meterNr = Environment.GetEnvironmentVariable("ELICZNIK_METER_NR");
             var connectionData = new Library.UserData( username, password, meterNr, 0.8);
             var fSharpAsync = Library.readingsForPeriodAsync(httpClient, period, connectionData);
             fSharpAsync.Wait();
