@@ -48,6 +48,7 @@ namespace ELicznikBillingPeriod
             }
             else 
             {
+                _logger.LogWarning($"Reading data failed: {res.ErrorValue}");
                 var response = req.CreateResponse(HttpStatusCode.NotFound);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
